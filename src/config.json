@@ -1,0 +1,21 @@
+{
+  "output": "../dist",
+  "locals": {
+    "url": "http://esbases.es.coldrye.eu/",
+    "description": "Assorted base classes for native classes so that they can be subclassed properly.",
+    "title": "esbases",
+    "keywords": [
+      "native", "babel", "es2015", "error", "number", "subclass", "class", "extend", "es", "base"
+    ]
+  },
+  "require": {
+    "_": "underscore",
+    "util": "util",
+    "marked": "marked"
+  },
+  "plugins": [
+  ],
+  "jade": {
+    "pretty": true
+  }
+}
