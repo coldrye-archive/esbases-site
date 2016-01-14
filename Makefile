@@ -24,7 +24,10 @@ include Makefile.conf
 
 .PHONY: dist build-assets build-externals build-src \
 		bower clean clean-build clean-dist \
-        deps deps-global
+        deps deps-global deploy undeploy
+
+
+undeployed_marker = $(build_dir)/undeployed
 
 
 # transpiles both src and test
@@ -111,4 +114,28 @@ deps-global:
 		} \
 		console.log(deps.join(' ')); \
     ")
+
+
+# deploys the site
+deploy: dist undeploy
+	@echo "deploying to $(deploy_host)"
+	@scp .$(deploy_conf)/sites-available/$(deploy_name).$(deploy_fqdn) $(deploy_user)@$(deploy_host):$(deploy_conf)/sites-available/$(deploy_name).$(deploy_fqdn)
+	@ssh $(deploy_user)@$(deploy_host) -C "ln -s $(deploy_conf)/sites-available/$(deploy_name).$(deploy_fqdn) $(deploy_conf)/sites-enabled/"
+	@scp -r $(dist_dir) $(deploy_user)@$(deploy_host):$(deploy_root)/$(deploy_name).$(deploy_fqdn)
+	@ssh $(deploy_user)@$(deploy_host) -C "service nginx reload"
+	@rm $(undeployed_marker)
+
+
+# undeploys the site
+undeploy: $(undeployed_marker)
+
+
+# internal
+$(undeployed_marker):
+	@echo "undeploying from $(deploy_host)"
+	@ssh $(deploy_user)@$(deploy_host) -C "rm -f $(deploy_conf)/sites-available/$(deploy_name).$(deploy_fqdn)"
+	@ssh $(deploy_user)@$(deploy_host) -C "rm -f $(deploy_conf)/sites-enabled/$(deploy_name).$(deploy_fqdn)"
+	@ssh $(deploy_user)@$(deploy_host) -C "service nginx reload"
+	@ssh $(deploy_user)@$(deploy_host) -C "rm -Rf $(deploy_root)/$(deploy_name).$(deploy_fqdn)"
+	@touch $(undeployed_marker)
 
