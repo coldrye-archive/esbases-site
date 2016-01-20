@@ -121,7 +121,8 @@ deploy: dist undeploy
 	@echo "deploying to $(deploy_host)"
 	@scp .$(deploy_conf)/sites-available/$(deploy_name).$(deploy_fqdn) $(deploy_user)@$(deploy_host):$(deploy_conf)/sites-available/$(deploy_name).$(deploy_fqdn)
 	@ssh $(deploy_user)@$(deploy_host) -C "ln -s $(deploy_conf)/sites-available/$(deploy_name).$(deploy_fqdn) $(deploy_conf)/sites-enabled/"
-	@scp -r $(dist_dir) $(deploy_user)@$(deploy_host):$(deploy_root)/$(deploy_name).$(deploy_fqdn)
+	@ssh $(deploy_user)@$(deploy_host) -C "mkdir $(deploy_root)/$(deploy_name).$(deploy_fqdn)"
+	@cd $(dist_dir) && tar -cz * | ssh $(deploy_user)@$(deploy_host) "tar -xz -C $(deploy_root)/$(deploy_name).$(deploy_fqdn)"
 	@ssh $(deploy_user)@$(deploy_host) -C "service nginx reload"
 	@rm $(undeployed_marker)
 

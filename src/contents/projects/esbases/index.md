@@ -4,7 +4,7 @@ order: 1
 cover: true
 docs:
   public: true
-  dev: false 
+  dev: true
 ---
 
 ## esbases Project Page
@@ -13,6 +13,10 @@ docs:
 
 If you want to integrate esbases in your own project, make sure that you take a
 look at the public API documentation.
+
+### Developer API Documentation
+
+The developer API documentation is provided for all who contribute to this project.
 
 ### Test Coverage
 
